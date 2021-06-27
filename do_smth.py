@@ -1,6 +1,6 @@
 from os import chdir
-from os.path import isdir
-from generators import generatePostUrls
+from os.path import isdir, isfile
+from generators import generatePostUrlsByFolderFiles, generatePostUrlsByFpThumbUrls
 
 IMG_LONG_SIDE = 200
 
@@ -8,7 +8,7 @@ IMG_LONG_SIDE = 200
 PATH = r""
 
 # fill it first
-remoteIds = ["", "", "", "", ""]
+remoteIds = ["392476", "392477", "392478"]
 
 
 def main(args):
@@ -23,9 +23,20 @@ def main(args):
     else:
         path = PATH
 
-    if not isdir(path):
-        print(f"Folder provided ({path}) is not a valid directory")
+    if isdir(path):
+        print(f"Generating urls by FOLDER FILES at path {path}\n")
+        chdir(path)
+        generatePostUrlsByFolderFiles(path, remoteIds, IMG_LONG_SIDE)
         return
 
-    chdir(path)
-    generatePostUrls(path, remoteIds, IMG_LONG_SIDE)
+    if isfile(path):
+        print(f"Generating urls by FP thumbnail list at path {path}\n")
+        file1 = open(path, 'r')
+        urls = file1.readlines()
+        generatePostUrlsByFpThumbUrls(urls, IMG_LONG_SIDE)
+        return
+
+    print(f"Something is wrong with the path \"{path}\". Doing nothing.")
+
+
+
